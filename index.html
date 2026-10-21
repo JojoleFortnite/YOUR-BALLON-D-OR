@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ballon d'Or 2026 : classement hors ligne</title>
+<style>
+:root{--bg:#0d0d12;--panel:#17171f;--card:#1e1e28;--line:#2c2c3a;--text:#f4f1ea;--muted:#8d8d9b;--gold:#d4af37;--gold2:#f3d77a;--blue:#6fa8ff;--serif:"Playfair Display",Georgia,serif;--sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f6f3ec;--panel:#fff;--card:#fff;--line:#e5dfd1;--text:#1d1b16;--muted:#77716a;--gold:#b8901f;--gold2:#8a6a12;--blue:#2d63c8}}
+:root[data-theme="light"]{--bg:#f6f3ec;--panel:#fff;--card:#fff;--line:#e5dfd1;--text:#1d1b16;--muted:#77716a;--gold:#b8901f;--gold2:#8a6a12;--blue:#2d63c8}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 50% -200px,rgba(212,175,55,.12),transparent),var(--bg);color:var(--text);font-family:var(--sans);line-height:1.45;min-height:100vh}
+header{text-align:center;padding:40px 16px 16px}
+.kicker{letter-spacing:.3em;text-transform:uppercase;font-size:.7rem;color:var(--gold);font-weight:600}
+h1{font-family:var(--serif);font-size:clamp(1.9rem,5vw,2.8rem);margin:8px 0 6px;background:linear-gradient(90deg,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{color:var(--muted);margin:0;font-size:.95rem}
+main{max-width:680px;margin:0 auto;padding:12px 16px 60px}
+.toolbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px 0;background:none}
+button{font:inherit;font-size:.88rem;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:8px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+button:hover{border-color:var(--gold)}
+button.primary{background:linear-gradient(90deg,var(--gold),var(--gold2));border-color:transparent;color:#1a1400;font-weight:600}
+button:disabled{opacity:.4;cursor:default}
+.legend{text-align:center;color:var(--muted);font-size:.78rem;margin:4px 0 14px}
+ol{list-style:none;padding:0;margin:0}
+li{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:7px;user-select:none;transition:transform .15s,border-color .15s,box-shadow .15s;box-shadow:0 1px 0 rgba(255,255,255,.03) inset}
+li:hover{border-color:var(--gold);box-shadow:0 6px 24px -12px rgba(212,175,55,.5)}
+li.dragging{opacity:.4}
+li.over{border-color:var(--gold);transform:scale(1.01)}
+.rank{font-family:var(--serif);font-size:1.3rem;font-weight:700;min-width:34px;text-align:center;color:var(--gold);line-height:1;padding-top:2px}
+.rank.top{color:var(--gold2);text-shadow:0 0 18px rgba(212,175,55,.45)}
+.body{flex:1;min-width:0}
+.name{font-weight:600;font-size:.88rem}
+.club{display:block;font-size:.7rem;color:var(--muted);font-weight:400;margin-top:1px}
+.stats{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.stats span{font-size:.64rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 7px}
+.stats b{color:var(--text);font-weight:600}
+.trophies{font-size:.68rem;color:var(--gold);margin-top:5px;line-height:1.4}
+.indiv{font-size:.68rem;color:var(--blue);margin-top:2px;line-height:1.4}
+.arrows{display:flex;flex-direction:column;gap:4px}
+.arrows button{padding:0 9px;font-size:.7rem;line-height:1.5;border-radius:8px}
+.handle{touch-action:none;cursor:grab;color:var(--muted);font-size:1rem;align-self:center;opacity:.6}
+.result li{cursor:default}
+.result li:hover{transform:none}
+.podium-title{font-family:var(--serif);text-align:center;font-size:1.5rem;margin:8px 0 14px}
+.compact li{padding:11px 13px;margin-bottom:8px;gap:12px;border-radius:12px}
+.compact .stats,.compact .trophies,.compact .indiv,.compact .club{display:none}
+.compact .rank{font-size:1.35rem;min-width:36px}
+.compact .name{font-size:1rem}
+.compact .arrows button{padding:0 6px;font-size:.6rem}
+.compact .handle{font-size:1.05rem}
+ol#list{display:flex;flex-wrap:wrap;justify-content:center;gap:0 12px}
+ol#list li{flex:0 0 calc((100% - (var(--cols,1) - 1) * 12px) / var(--cols,1));box-sizing:border-box;margin-bottom:12px}
+body.one-col ol#list li{flex:0 0 100%}
+main{width:min(76vw,1800px);max-width:1800px;margin:0 auto;padding-left:0;padding-right:0}
+.compact .arrows{display:none}
+.compact li{cursor:pointer}
+.compact li.open .stats,.compact li.open .trophies,.compact li.open .indiv,.compact li.open .club{display:block}
+.compact li.open{padding:11px 13px}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 11px}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.icon-btn.on{border-color:var(--gold);color:var(--gold)}
+body.one-col ol#list{grid-template-columns:1fr!important}
+body.one-col main{max-width:960px}
+.cmp{font-size:.7rem;color:var(--muted);margin-top:4px}
+.cmp-total{text-align:center;color:var(--muted);font-size:.85rem;margin:0 0 12px}
+.bigpts{margin-left:auto;align-self:center;text-align:right;font-family:var(--serif);font-size:1.7rem;font-weight:700;color:var(--gold);min-width:70px;line-height:1}
+.bigpts small{display:block;font-family:var(--sans);font-size:.6rem;font-weight:500;color:var(--muted);margin-top:4px;letter-spacing:.05em}
+.hidden{display:none!important}
+@media (max-width:480px){.handle{display:none}li{gap:10px;padding:12px}.rank{min-width:34px;font-size:1.4rem}}
+
+.bigpts{margin-left:auto;align-self:center;text-align:right;font-family:var(--serif);font-size:1.7rem;font-weight:700;color:var(--gold);min-width:70px;line-height:1}
+.bigpts small{display:block;font-family:var(--sans);font-size:.6rem;color:var(--muted);font-weight:500;margin-top:4px;letter-spacing:.05em}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:22px}
+.panel h2{font-family:var(--serif);font-size:1.05rem;color:var(--gold);margin:0 0 8px}
+.panel .info{color:var(--muted);font-size:.85rem;margin-bottom:10px;text-align:center}
+.ballot{font-size:.82rem;padding:6px 4px;border-bottom:1px solid var(--line);color:var(--muted)}
+.ballot:last-child{border-bottom:none}
+.msg{text-align:center;font-size:.9rem;margin:8px 0;color:var(--gold)}
+.danger{color:#c0392b}
+.hidden{display:none!important}
+.avgnote{text-align:center;color:var(--muted);font-size:.85rem;margin:4px 0 12px}
+body.is-dragging{user-select:none}
+li{touch-action:pan-y}
+
+li.dragging{opacity:.55;transform:scale(1.02);box-shadow:0 16px 36px -12px rgba(212,175,55,.6);border-color:var(--gold);position:relative;z-index:2}
+body.is-dragging{user-select:none}
+
+#personPage{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;display:none;padding:70px 16px 60px}
+#personPage.open{display:block}
+#personPage .inner{width:min(94vw,820px);margin:0 auto}
+#personPage h2{font-family:var(--serif);color:var(--gold);text-align:center;margin:8px 0 14px}
+#resultBack,#personBack{position:fixed;top:14px;left:14px;z-index:51;min-width:76px;height:52px;padding:0 22px;border-radius:999px;font-size:1.6rem;line-height:1;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1.5px solid var(--gold);color:var(--gold);box-shadow:0 6px 18px -8px rgba(0,0,0,.35);cursor:pointer}
+#resultBack{display:none}
+#resultBack.show{display:flex}
+
+#validate.locked{opacity:.4;cursor:not-allowed}
+#toast{position:fixed;top:14px;right:14px;z-index:60;display:flex;align-items:center;gap:9px;max-width:min(300px,calc(100vw - 28px));background:rgba(28,22,20,.92);color:#f6efe6;padding:8px 12px 8px 10px;border-radius:10px;border:1px solid rgba(192,57,43,.55);box-shadow:0 8px 22px -10px rgba(0,0,0,.6);font-size:.8rem;line-height:1.3;opacity:0;transform:translateY(-6px);transition:opacity .2s ease,transform .25s ease;pointer-events:none}
+#toast.show{opacity:1;transform:none}
+#toast .ico{flex:none;width:6px;height:6px;border-radius:50%;background:#e74c3c;box-shadow:0 0 0 3px rgba(231,76,60,.25)}
+#toast .txt{flex:1;min-width:0}
+#toast .ttl{font-weight:600;font-size:.8rem;color:#fff}
+#toast .msg{font-size:.74rem;opacity:.8}
+#toast .bar{margin-top:5px;height:2px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden}
+#toast .bar i{display:block;height:100%;width:0;background:#e74c3c;transition:width .3s ease}
+
+.ballot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ballot .who{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-del{flex:none;background:none;border:1px solid #c0392b;color:#c0392b;border-radius:999px;padding:2px 10px;font-size:.72rem;cursor:pointer}
+.admin-del:hover{background:#c0392b;color:#fff}
+#adminBtn.on{border-color:#c0392b;color:#c0392b}
+
+#personList{display:flex;flex-wrap:wrap;justify-content:center;gap:0 12px}
+#personList li{flex:0 0 calc((100% - (var(--pc,1) - 1) * 12px) / var(--pc,1));box-sizing:border-box;margin-bottom:12px}
+.bigpts{display:none!important}
+</style>
+</head>
+<body class="one-col">
+<div id="toast" role="alert"></div>
+<header>
+  <div class="kicker">Saison 2025-2026</div>
+  <h1>Ballon d'Or 2026</h1>
+  <p id="counter">Classe les 30 nommés du plus fort au moins fort</p>
+</header>
+<main>
+  <div id="rankView">
+    <div class="toolbar" id="bar">
+      <button id="viewToggle" class="icon-btn" title="Vue grille" aria-label="Vue grille"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg></button>
+      <button id="compactBtn">Vue compacte</button>
+      <button id="reset">Réinitialiser</button>
+      <button class="primary" id="validate">Valider mon classement</button>
+    </div>
+    <p class="legend" id="legend">M : matchs · B : buts · PD : passes décisives</p>
+    <ol id="list"></ol>
+  </div>
+
+  <div id="result" class="hidden">
+    <h2 class="podium-title">Classement moyen</h2>
+    <p class="avgnote" id="avgInfo"></p>
+    <ol class="result" id="final"></ol>
+  </div>
+
+  <div class="panel">
+    <h2>Sauvegarde</h2>
+    <div class="info">Tout est enregistré sur cet appareil, même hors ligne. Pour ajouter les classements d'un autre appareil, exporte le fichier et importe-le ici.</div>
+    <div class="toolbar" style="padding:0">
+      <button id="showAvg">Voir le classement moyen</button>
+      <button id="exportBtn">Exporter</button>
+      <button id="adminBtn">Mode admin</button>
+      <button id="importBtn">Importer</button>
+      <input type="file" id="importFile" accept=".txt,.json,text/plain,application/json" class="hidden">
+    </div>
+    <div class="msg" id="savedMsg"></div>
+    <div id="ballotList"></div>
+  </div>
+</main>
+<button id="resultBack" aria-label="Retour" title="Retour">←</button>
+<div id="personPage"><button id="personBack" aria-label="Retour" title="Retour">←</button><div class="inner"><h2 id="personTitle"></h2><ol id="personList"></ol></div></div>
+<script>
+const PLAYERS = [
+  ["Jude Bellingham","Real Madrid / Angleterre",52,15,6],
+  ["Pau Cubarsí","FC Barcelone / Espagne",62,1,2],
+  ["Marc Cucurella","Real Madrid / Espagne",65,2,7],
+  ["Ousmane Dembélé","PSG / France",51,26,14],
+  ["Luis Díaz","Bayern Munich / Colombie",66,30,23],
+  ["Bruno Fernandes","Manchester United / Portugal",51,13,25],
+  ["Gabriel","Arsenal / Brésil",59,4,6],
+  ["Erling Haaland","Manchester City / Norvège",64,58,11],
+  ["Achraf Hakimi","PSG / Maroc",49,4,17],
+  ["Harry Kane","Bayern Munich / Angleterre",65,73,8],
+  ["Khvicha Kvaratskhelia","PSG / Géorgie",57,24,10],
+  ["Lamine Yamal","FC Barcelone / Espagne",57,25,20],
+  ["Sadio Mané","Al Nassr / Sénégal",55,24,13],
+  ["Marquinhos","PSG / Brésil",43,2,0],
+  ["Lautaro Martínez","Inter / Argentine",55,30,10],
+  ["Kylian Mbappé","Real Madrid / France",60,58,13],
+  ["Nuno Mendes","PSG / Portugal",53,7,8],
+  ["Lionel Messi","Inter Miami / Argentine",49,45,30],
+  ["João Neves","PSG / Portugal",49,11,4],
+  ["Michael Olise","Bayern Munich / France",69,27,35],
+  ["Willian Pacho","PSG / Équateur",56,2,1],
+  ["Julián Quiñones","Al Qadsiah / Mexique",46,41,5],
+  ["Declan Rice","Arsenal / Angleterre",69,8,14],
+  ["Rodri","FC Barcelone / Espagne",46,2,0],
+  ["Fabián Ruiz","PSG / Espagne",45,3,6],
+  ["William Saliba","Arsenal / France",60,1,1],
+  ["Ferran Torres","PSG / Espagne",65,25,7],
+  ["Dayot Upamecano","Bayern Munich / France",58,2,4],
+  ["Vinícius Jr","Real Madrid / Brésil",66,28,16],
+  ["Vitinha","PSG / Portugal",64,7,10]
+];
+
+const POINTS = [161,151,141,132,123,114,106,98,90,83,76,69,63,57,51,45,40,35,30,26,22,18,15,12,9,7,5,3,2,1];
+
+const TROPHIES = {
+  "Sadio Mané": ["Saudi Pro League"],
+  "João Neves": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Coupe intercontinentale","Trophée des Champions"],
+  "Khvicha Kvaratskhelia": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Coupe intercontinentale","Trophée des Champions"],
+  "Michael Olise": ["Bundesliga","Coupe d'Allemagne","Supercoupe d'Allemagne"],
+  "Harry Kane": ["Bundesliga","Coupe d'Allemagne","Supercoupe d'Allemagne"],
+  "William Saliba": ["Premier League"],
+  "Lautaro Martínez": ["Série A","Coppa Italia"],
+  "Erling Haaland": ["FA Cup","EFL Cup"],
+  "Declan Rice": ["Premier League"],
+  "Pau Cubarsí": ["Liga","Supercoupe d'Espagne","Coupe du monde"],
+  "Lamine Yamal": ["Liga","Supercoupe d'Espagne","Coupe du monde"],
+  "Rodri": ["FA Cup","EFL Cup","Coupe du monde"],
+  "Fabián Ruiz": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Trophée des Champions","Coupe intercontinentale","Coupe du monde"],
+  "Achraf Hakimi": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Trophée des Champions","Coupe intercontinentale","Coupe d'Afrique des nations"],
+  "Gabriel": ["Premier League"],
+  "Ousmane Dembélé": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Coupe intercontinentale","Trophée des Champions"],
+  "Luis Díaz": ["Bundesliga","Coupe d'Allemagne","Supercoupe d'Allemagne"],
+  "Lionel Messi": ["MLS"],
+  "Marquinhos": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Coupe intercontinentale","Trophée des Champions"],
+  "Willian Pacho": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Coupe intercontinentale","Trophée des Champions"],
+  "Nuno Mendes": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Coupe intercontinentale","Trophée des Champions"],
+  "Ferran Torres": ["Liga","Supercoupe d'Espagne","Coupe du monde"],
+  "Dayot Upamecano": ["Bundesliga","Coupe d'Allemagne","Supercoupe d'Allemagne"],
+  "Marc Cucurella": ["Coupe du monde"],
+  "Vitinha": ["Ligue des champions","Ligue 1","Supercoupe d'Europe","Trophée des Champions","Coupe intercontinentale"]
+};
+
+const INDIVIDUAL = {
+  "Khvicha Kvaratskhelia": ["Meilleur joueur de la Ligue des champions"],
+  "Achraf Hakimi": ["Ballon d'Or africain"],
+  "Sadio Mané": ["Meilleur joueur de la CAN 2025"],
+  "Ousmane Dembélé": ["Plus beau but de Ligue 1","Meilleur joueur de Ligue 1"],
+  "Lautaro Martínez": ["Meilleur attaquant de Série A","Meilleur buteur Série A (Capocannoniere)"],
+  "Bruno Fernandes": ["Meilleur passeur de Premier League","Meilleur joueur de Premier League"],
+  "Julián Quiñones": ["Meilleur buteur Saudi Pro League (Golden Boot)"],
+  "Rodri": ["Meilleur joueur de la Coupe du monde"],
+  "Pau Cubarsí": ["Meilleur jeune de la Coupe du monde"],
+  "Kylian Mbappé": ["Soulier d'Or Coupe du monde","Soulier d'Or Ligue des champions","Meilleur buteur Liga (Pichichi)"],
+  "Michael Olise": ["Meilleur joueur de Bundesliga"],
+  "Harry Kane": ["Soulier d'Or Européen","Meilleur buteur Bundesliga (Torjägerkanone)"],
+  "Erling Haaland": ["Soulier d'Or Premier League"],
+  "Lamine Yamal": ["Meilleur joueur de la Liga"]
+};
+
+const KEY = 'bdo2026_ballots_v1';
+const N = PLAYERS.length;
+let order = PLAYERS.map((_, i) => i);
+const list = document.getElementById('list');
+const finalList = document.getElementById('final');
+
+function loadBallots() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+function saveBallots(arr) { try { localStorage.setItem(KEY, JSON.stringify(arr)); return true; } catch (e) { return false; } }
+
+function extras(name) {
+  const tr = TROPHIES[name] || [];
+  const ind = INDIVIDUAL[name] || [];
+  let h = '';
+  if (tr.length) h += `<div class="trophies">🏆 ${tr.join(' · ')}</div>`;
+  if (ind.length) h += `<div class="indiv">⭐ ${ind.join(' · ')}</div>`;
+  return h;
+}
+function statsHTML(p) {
+  const [, , m, b, pd] = PLAYERS[p];
+  return `<div class="stats"><span>M <b>${m}</b></span><span>B <b>${b}</b></span><span>PD <b>${pd}</b></span></div>`;
+}
+
+function renderRank() {
+  list.innerHTML = '';
+  order.forEach((p, i) => {
+    const [name, club] = PLAYERS[p];
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="rank ${i < 3 ? 'top' : ''}">${i + 1}</span>
+      <div class="body"><div class="name">${name}<span class="club">${club}</span></div>${statsHTML(p)}${extras(name)}</div>
+      <span class="arrows">
+        <button data-act="up" ${i === 0 ? 'disabled' : ''}>▲</button>
+        <button data-act="down" ${i === N - 1 ? 'disabled' : ''}>▼</button>
+      </span>
+      <span class="handle" aria-hidden="true">⋮⋮</span>`;
+    li.dataset.index = i; li.dataset.p = p; li.draggable = canMouse;
+    li.querySelectorAll('button').forEach(b => b.addEventListener('click', e => {
+      e.stopPropagation();
+      const to = i + (b.dataset.act === 'up' ? -1 : 1);
+      if (to < 0 || to >= N) return;
+      const [it] = order.splice(i, 1);
+      order.splice(to, 0, it);
+      markMoved(it);
+      renderRank();
+    }));
+    list.appendChild(li);
+  });
+}
+
+
+
+
+// ===== Glisser fluide, avec défilement automatique près des bords de l'écran =====
+const canMouse = matchMedia('(pointer: fine)').matches;
+function syncOrder() { order = [...list.children].map(li => Number(li.dataset.p)); }
+function reindex() {
+  [...list.children].forEach((li, i) => {
+    li.dataset.index = i;
+    const r = li.querySelector('.rank'); if (r) r.textContent = i + 1;
+    const up = li.querySelector('[data-act=up]'), dn = li.querySelector('[data-act=down]');
+    if (up) up.disabled = i === 0;
+    if (dn) dn.disabled = i === list.children.length - 1;
+  });
+}
+function animateMove(fn) {
+  const items = [...list.children];
+  const before = new Map(items.map(el => [el, el.getBoundingClientRect().top]));
+  fn();
+  items.forEach(el => {
+    const d = before.get(el) - el.getBoundingClientRect().top;
+    if (Math.abs(d) < 1) return;
+    el.animate([{ transform: `translateY(${d}px)` }, { transform: 'translateY(0)' }],
+      { duration: 220, easing: 'cubic-bezier(.2,.7,.3,1)' });
+  });
+}
+let moves = 0;
+const MIN_MOVES = 10;
+// on compte les JOUEURS déplacés (chaque joueur compte une fois, peu importe le nombre de places)
+const movedSet = new Set();
+function markMoved(p) { moves++; updateValidate(); }
+function updateValidate() {
+  const btn = document.getElementById('validate');
+  btn.classList.toggle('locked', moves < MIN_MOVES);
+  btn.textContent = 'Valider mon classement';
+}
+// petit message rouge en haut à droite
+let toastTimer = null;
+function showToast(done, total) {
+  const el = document.getElementById('toast');
+  const left = total - done;
+  el.innerHTML = `
+    <span class="ico"></span>
+    <div class="txt">
+      <div class="ttl">Encore ${left} changement${left > 1 ? 's' : ''} pour valider</div>
+      <div class="msg">${done} / ${total} déplacements</div>
+      <div class="bar"><i style="width:${Math.round(done / total * 100)}%"></i></div>
+    </div>`;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+function placeNear(dragEl, target, y) {
+  if (!dragEl || !target || target === dragEl) return;
+  const r = target.getBoundingClientRect();
+  const before = y < r.top + r.height / 2;
+  if (before && dragEl.nextElementSibling === target) return;
+  if (!before && target.nextElementSibling === dragEl) return;
+  animateMove(() => list.insertBefore(dragEl, before ? target : target.nextElementSibling));
+  reindex();
+}
+function move(from, to) {
+  const items = [...list.children];
+  if (to < 0 || to >= items.length || from === to) return;
+  animateMove(() => list.insertBefore(items[from], to < from ? items[to] : items[to].nextElementSibling));
+  reindex(); syncOrder(); markMoved(items[from].dataset.p);
+}
+
+// Défilement automatique : pendant un glisser, si le doigt/la souris approche du bas ou du haut
+// de l'écran, la page défile toute seule et la carte se replace au bon endroit.
+let lastX = 0, lastY = 0, autoRaf = null;
+function autoScrollStep() {
+  const el = (st && st.active) ? st.li : dragEl;
+  if (!el) { autoRaf = null; return; }
+  const h = window.innerHeight, zone = 110;
+  let v = 0;
+  if (lastY > h - zone) v = Math.min(22, 4 + (lastY - (h - zone)) / 3);
+  else if (lastY < zone) v = -Math.min(22, 4 + (zone - lastY) / 3);
+  if (v) {
+    window.scrollBy(0, v);
+    const under = document.elementFromPoint(lastX, lastY);
+    const t = under && under.closest('li');
+    if (t && list.contains(t)) placeNear(el, t, lastY);
+  }
+  autoRaf = requestAnimationFrame(autoScrollStep);
+}
+function startAuto() { if (!autoRaf) autoRaf = requestAnimationFrame(autoScrollStep); }
+
+// Souris (ordinateur) : glisser natif, on attrape la carte n'importe où
+let dragEl = null;
+let dragStartPos = -1;
+list.addEventListener('dragstart', e => {
+  const li = e.target.closest('li'); if (!li) return;
+  dragEl = li;
+  dragStartPos = [...list.children].indexOf(li);
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', 'x'); } catch (_) {}
+  setTimeout(() => li.classList.add('dragging'), 0);
+  startAuto();
+});
+list.addEventListener('dragover', e => {
+  if (!dragEl) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  lastX = e.clientX; lastY = e.clientY;
+  const t = e.target.closest('li');
+  if (t) placeNear(dragEl, t, e.clientY);
+});
+list.addEventListener('drop', e => e.preventDefault());
+document.addEventListener('dragover', e => { if (dragEl) { lastX = e.clientX; lastY = e.clientY; } });
+list.addEventListener('dragend', () => {
+  if (dragEl) {
+    dragEl.classList.remove('dragging');
+    if ([...list.children].indexOf(dragEl) !== dragStartPos) markMoved(dragEl.dataset.p);
+  }
+  dragEl = null; syncOrder(); reindex();
+});
+
+// Doigt (téléphone) : appui maintenu pour attraper la carte, puis glisser.
+// Sans appui maintenu, le doigt fait défiler la page normalement.
+let st = null;
+function activate(id) {
+  if (!st) return;
+  st.active = true;
+  st.li.classList.add('dragging');
+  list.setPointerCapture(id);
+  document.body.classList.add('is-dragging');
+  if (navigator.vibrate) navigator.vibrate(12);
+  startAuto();
+}
+list.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' || e.target.closest('.arrows')) return;
+  const li = e.target.closest('li'); if (!li) return;
+  st = { li, id: e.pointerId, x: e.clientX, y: e.clientY, active: false, timer: null, startPos: [...list.children].indexOf(li) };
+  st.timer = setTimeout(() => activate(e.pointerId), 200);
+});
+list.addEventListener('pointermove', e => {
+  if (!st || e.pointerId !== st.id) return;
+  if (!st.active) {
+    if (Math.hypot(e.clientX - st.x, e.clientY - st.y) > 10) { clearTimeout(st.timer); st = null; }
+    return;
+  }
+  e.preventDefault();
+  lastX = e.clientX; lastY = e.clientY;
+  const under = document.elementFromPoint(e.clientX, e.clientY);
+  const t = under && under.closest('li');
+  if (t && list.contains(t)) placeNear(st.li, t, e.clientY);
+});
+function endTouch() {
+  if (st) { clearTimeout(st.timer); st.li.classList.remove('dragging'); if (st.active) { if ([...list.children].indexOf(st.li) !== st.startPos) markMoved(st.li.dataset.p); syncOrder(); reindex(); } }
+  document.body.classList.remove('is-dragging');
+  st = null;
+}
+list.addEventListener('pointerup', endTouch);
+list.addEventListener('pointercancel', endTouch);
+document.addEventListener('touchmove', e => {
+  if (document.body.classList.contains('is-dragging')) e.preventDefault();
+}, { passive: false });
+
+
+
+
+function computeAverage(ballots) {
+  const sums = {};
+  PLAYERS.forEach(p => sums[p[0]] = 0);
+  ballots.forEach(b => b.ranks.forEach((name, i) => { if (sums[name] !== undefined) sums[name] += POINTS[i]; }));
+  const n = ballots.length;
+  return PLAYERS.map(p => ({
+      name: p[0], p: PLAYERS.indexOf(p), club: p[1],
+      avg: n ? sums[p[0]] / n : 0,
+      trophies: (TROPHIES[p[0]] || []).length,   // nombre de trophées collectifs
+      rnd: Math.random()                           // départage aléatoire en dernier recours
+    }))
+    .sort((a, b) => {
+      if (Math.abs(b.avg - a.avg) > 1e-9) return b.avg - a.avg;   // 1) plus de points moyens
+      if (b.trophies !== a.trophies) return b.trophies - a.trophies; // 2) plus de trophées collectifs
+      return a.rnd - b.rnd;                                          // 3) sinon au hasard
+    });
+}
+
+function renderResult() {
+  const ballots = loadBallots();
+  finalList.innerHTML = '';
+  const info = document.getElementById('avgInfo');
+  if (!ballots.length) {
+    info.textContent = 'Aucun classement enregistré pour le moment.';
+    return;
+  }
+  info.textContent = `Moyenne sur ${ballots.length} classement${ballots.length > 1 ? 's' : ''}`;
+  computeAverage(ballots).forEach((x, i) => {
+    const pIdx = PLAYERS.findIndex(q => q[0] === x.name);
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="rank ${i < 3 ? 'top' : ''}">${i + 1}</span>
+      <div class="body"><div class="name">${x.name}<span class="club">${x.club}</span></div>${statsHTML(pIdx)}${extras(x.name)}</div>
+      <div class="bigpts">${x.avg.toFixed(1)}<small>pts moy.</small></div>`;
+    finalList.appendChild(li);
+  });
+}
+
+const ADMIN_CODE = 'ballon2026';
+let adminOn = false;
+function renderBallots() {
+  const ballots = loadBallots();
+  document.getElementById('counter').textContent = ballots.length
+    ? `${ballots.length} classement${ballots.length > 1 ? 's' : ''} enregistré${ballots.length > 1 ? 's' : ''} sur cet appareil`
+    : 'Classe les 30 nommés du plus fort au moins fort';
+  const box = document.getElementById('ballotList');
+  box.innerHTML = '';
+  if (!ballots.length) return;
+  const title = document.createElement('div');
+  title.className = 'info';
+  title.textContent = adminOn
+    ? 'Mode admin : supprime les classements que tu veux.'
+    : 'Personnes ayant validé (touche un nom pour voir son classement) :';
+  box.appendChild(title);
+  ballots.slice().reverse().forEach(b => {
+    const row = document.createElement('div');
+    row.className = 'ballot';
+    row.style.cursor = adminOn ? 'default' : 'pointer';
+    const who = document.createElement('span');
+    who.className = 'who';
+    who.textContent = `${b.name || 'Anonyme'} · ${new Date(b.at).toLocaleString('fr-FR')}`;
+    row.appendChild(who);
+    if (adminOn) {
+      const del = document.createElement('button');
+      del.className = 'admin-del';
+      del.textContent = 'Supprimer';
+      del.onclick = e => {
+        e.stopPropagation();
+        if (!confirm(`Supprimer le classement de ${b.name || 'Anonyme'} ?`)) return;
+        saveBallots(loadBallots().filter(x => x.id !== b.id));
+        renderBallots();
+        renderResult();
+        document.getElementById('savedMsg').textContent = '✓ Classement supprimé.';
+      };
+      row.appendChild(del);
+    } else {
+      row.onclick = () => showBallot(b);
+    }
+    box.appendChild(row);
+  });
+  const view = document.createElement('div');
+  view.id = 'ballotView';
+  box.appendChild(view);
+}
+
+// bouton Mode admin : demande le code, puis active/désactive la suppression
+document.getElementById('adminBtn').onclick = () => {
+  if (adminOn) {
+    adminOn = false;
+    document.getElementById('adminBtn').textContent = 'Mode admin';
+    document.getElementById('adminBtn').classList.remove('on');
+    renderBallots();
+    return;
+  }
+  const code = prompt('Code admin :');
+  if (code === null) return;
+  if (code !== ADMIN_CODE) { alert('Code incorrect.'); return; }
+  adminOn = true;
+  document.getElementById('adminBtn').textContent = 'Quitter le mode admin';
+  document.getElementById('adminBtn').classList.add('on');
+  renderBallots();
+};
+
+// ouvre une page dédiée avec le classement complet d'une personne (flèche en haut à gauche pour revenir)
+function showBallot(b) {
+  document.getElementById('personTitle').textContent = `Classement de ${b.name || 'Anonyme'}`;
+  const ol = document.getElementById('personList');
+  ol.innerHTML = '';
+  b.ranks.forEach((name, i) => {
+    const pIdx = PLAYERS.findIndex(q => q[0] === name);
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="rank ${i < 3 ? 'top' : ''}">${i + 1}</span>
+      <div class="body"><div class="name">${name}<span class="club">${pIdx >= 0 ? PLAYERS[pIdx][1] : ''}</span></div></div>
+      <div class="bigpts">${POINTS[i]}<small>pts</small></div>`;
+    ol.appendChild(li);
+  });
+  document.getElementById('personPage').classList.add('open');
+  setPersonCols();
+  window.scrollTo(0, 0);
+}
+// grille du classement d'une personne : même principe que la liste principale
+function setPersonCols() {
+  const w = document.querySelector('#personPage .inner').clientWidth;
+  const cols = Math.max(1, Math.floor((w + 12) / (300 + 12)));
+  document.getElementById('personList').style.setProperty('--pc', cols);
+}
+window.addEventListener('resize', () => {
+  if (document.getElementById('personPage').classList.contains('open')) setPersonCols();
+});
+document.getElementById('personBack').onclick = () => {
+  document.getElementById('personPage').classList.remove('open');
+  window.scrollTo(0, 0);
+};
+
+function showResultView() {
+  document.getElementById('resultBack').classList.add('show');
+  document.getElementById('rankView').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  renderResult();
+  window.scrollTo(0, 0);
+}
+function showRankView() {
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('rankView').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('validate').onclick = () => {
+  if (moves < MIN_MOVES) { showToast(moves, MIN_MOVES); return; }
+  const name = (prompt('Ton prénom ou pseudo (facultatif) :', '') || '').trim();
+  const ballots = loadBallots();
+  ballots.push({
+    id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+    name: name,
+    at: Date.now(),
+    ranks: order.map(p => PLAYERS[p][0])
+  });
+  const ok = saveBallots(ballots);
+  document.getElementById('savedMsg').textContent = ok
+    ? '✓ Classement enregistré sur cet appareil.'
+    : '⚠️ Impossible d\'enregistrer (stockage du navigateur bloqué).';
+  renderBallots();
+  showResultView();
+};
+document.getElementById('reset').onclick = () => { order = PLAYERS.map((_, i) => i); movedSet.clear(); moves = 0; updateValidate(); renderRank(); };
+document.getElementById('showAvg').onclick = showResultView;
+document.getElementById('resultBack').onclick = () => { showRankView(); document.getElementById('resultBack').classList.remove('show'); };
+
+document.getElementById('exportBtn').onclick = () => {
+  const ballots = loadBallots();
+  const fmt = ts => new Date(ts).toLocaleString('fr-FR');
+  const L = [];
+  L.push("BALLON D'OR 2026 : CLASSEMENTS");
+  L.push('Exporté le ' + fmt(Date.now()));
+  L.push('Nombre de classements : ' + ballots.length);
+  L.push('');
+  ballots.forEach(b => {
+    L.push('=== ' + (b.name || 'Anonyme') + ' (' + fmt(b.at) + ') ===');
+    b.ranks.forEach((name, i) => L.push((i + 1) + '. ' + name));
+    L.push('');
+  });
+  if (ballots.length) {
+    L.push('=== MOYENNE DE TOUS LES CLASSEMENTS ===');
+    computeAverage(ballots).forEach((x, i) => L.push((i + 1) + '. ' + x.name));
+    L.push('');
+  }
+  L.push('----- DONNEES POUR IMPORT (ne pas modifier) -----');
+  L.push(JSON.stringify({ app: 'ballon-dor-2026', ballots: ballots }));
+  const blob = new Blob([L.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ballon-dor-2026-classements.txt';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
+document.getElementById('importFile').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const raw = reader.result; const mark = '----- DONNEES POUR IMPORT (ne pas modifier) -----';
+      const data = JSON.parse(raw.includes(mark) ? raw.slice(raw.indexOf(mark) + mark.length) : raw);
+      const incoming = Array.isArray(data.ballots) ? data.ballots : [];
+      const current = loadBallots();
+      const ids = new Set(current.map(b => b.id));
+      let added = 0;
+      incoming.forEach(b => {
+        if (b && b.id && Array.isArray(b.ranks) && b.ranks.length === N && !ids.has(b.id)) { current.push(b); ids.add(b.id); added++; }
+      });
+      saveBallots(current);
+      document.getElementById('savedMsg').textContent = `✓ ${added} classement(s) importé(s).`;
+      renderBallots();
+    } catch (err) {
+      document.getElementById('savedMsg').textContent = '⚠️ Fichier invalide.';
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(f);
+};
+
+
+document.getElementById('compactBtn').onclick = e => {
+  const on = document.body.classList.toggle('compact');
+  e.currentTarget.textContent = on ? 'Vue détaillée' : 'Vue compacte';
+};
+list.addEventListener('click', e => {
+  if (e.target.closest('.handle, .arrows')) return;
+  const li = e.target.closest('li');
+  if (!li || !document.body.classList.contains('compact')) return;
+  li.classList.toggle('open');
+});
+const vToggle = document.getElementById('viewToggle');
+vToggle.onclick = () => {
+  const toList = document.body.classList.toggle('one-col');
+  vToggle.innerHTML = toList
+    ? `<svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg>`
+    : `<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>`;
+  vToggle.title = toList ? 'Vue grille' : 'Vue liste';
+  vToggle.setAttribute('aria-label', vToggle.title);
+};
+setCols();
+
+
+// Nombre de colonnes : la liste occupe toute la largeur disponible, chaque colonne se partage l'espace
+function setCols() {
+  const one = document.body.classList.contains('one-col');
+  let cols = 1;
+  if (!one) cols = Math.max(1, Math.floor((list.clientWidth + 12) / (300 + 12)));
+  list.style.setProperty('--cols', cols);
+}
+window.addEventListener('resize', setCols);
+setCols();
+updateValidate();
+renderRank();
+renderBallots();
+</script>
+</body>
+</html>
